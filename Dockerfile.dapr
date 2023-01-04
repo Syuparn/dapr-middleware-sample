@@ -1,0 +1,24 @@
+# NOTE: use golang image to download deps
+FROM golang:1.19 as prepare
+
+WORKDIR /work
+COPY middleware .
+RUN go mod download
+
+FROM tinygo/tinygo:0.26.0 as builder
+
+WORKDIR /work
+
+USER root
+ARG GOPATH=/usr/local/go
+
+COPY middleware .
+COPY --from=prepare /go/pkg/mod /usr/local/go/pkg/mod
+RUN ls /usr/local/go/pkg/mod/github.com/wapc
+RUN tinygo build -o middleware.wasm -scheduler=none --no-debug -target=wasi main.go
+
+# override default sidecar image
+# https://docs.dapr.io/reference/arguments-annotations-overview/
+FROM daprio/daprd:latest
+
+COPY --from=builder /work/middleware.wasm /middleware/middleware.wasm

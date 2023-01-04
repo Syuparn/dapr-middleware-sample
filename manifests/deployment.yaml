@@ -17,6 +17,8 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "hello"
         dapr.io/app-port: "8080"
+        # use patched image
+        dapr.io/sidecar-image: "daprwithmiddleware:latest"
     spec:
       containers:
       - name: hello

@@ -1,0 +1,12 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: wasm
+spec:
+  type: middleware.http.wasm.basic
+  version: v1
+  metadata:
+  - name: path
+    value: "/middleware/middleware.wasm"
+  - name: poolSize
+    value: 1
